@@ -1,9 +1,7 @@
 const express = require("express");
-
+const { listCategories } = require('./controllers/categories');
 const routes = express();
 
-routes.get("/", (req, res) => {
-  return res.json("tudo certo!");
-});
+routes.get('/categoria', listCategories);
 
 module.exports = routes;
