@@ -2,12 +2,16 @@ const express = require("express");
 const { listCategories } = require("./controllers/categories");
 const { registerUser, login } = require("./controllers/users");
 const checkLogin = require("./middlewares/authorization");
+const {
+  validateUserDataFields,
+  validateEmailAndPasswordFields,
+} = require("./middlewares/validateUserData");
 const routes = express();
 
 routes.get("/categoria", listCategories);
-routes.post("/usuario", registerUser);
-routes.post("/login", login)
+routes.post("/usuario", validateUserDataFields, registerUser);
+routes.post("/login", validateEmailAndPasswordFields, login);
 
-routes.use(checkLogin)
+routes.use(checkLogin);
 
 module.exports = routes;
