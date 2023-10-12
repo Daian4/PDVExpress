@@ -53,7 +53,7 @@ const login = async (req, res) => {
       const user = await knex('usuarios').where('email', email).first();
 
       if (!user) {
-          return res.status(400).json({mensagem: "Usuário não encontrado"});
+          return res.status(400).json({mensagem: "Email e/ou senha estão incorretos"});
       }
 
 
