@@ -1,6 +1,6 @@
 const knex = require("../../database/connection");
 const bcrypt = require("bcrypt");
-const passwordJWT = require("../passwordJWT");
+const passwordJWT = process.env.passwordJWT;
 const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
