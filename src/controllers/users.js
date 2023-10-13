@@ -68,7 +68,26 @@ const login = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+   const { usuario } = req;
+
+  try {
+    // Consulte o banco de dados para obter os detalhes do perfil do usuário
+    const UserProfile = await knex("usuarios")
+      .where("id", usuario.id)
+      .first();
+
+    // Remover a senha do objeto do perfil do usuário antes de enviar a resposta
+    const { senha, ...userDetail } = UserProfile;
+
+    return res.status(200).json(userDetail);
+  } catch (error) {
+    return res.status(500).json({ mensagem: "Erro interno do servidor" });
+  }
+};
+
 module.exports = {
   registerUser,
   login,
+  getUser,
 };
