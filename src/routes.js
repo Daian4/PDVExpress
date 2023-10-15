@@ -1,6 +1,6 @@
 const express = require("express");
 const { listCategories } = require("./controllers/categories");
-const { registerUser, login } = require("./controllers/users");
+const { registerUser, login, userUpdate } = require("./controllers/users");
 const checkLogin = require("./middlewares/authorization");
 const {
   validateUserDataFields,
@@ -13,5 +13,5 @@ routes.post("/usuario", validateUserDataFields, registerUser);
 routes.post("/login", validateEmailAndPasswordFields, login);
 
 routes.use(checkLogin);
-
+routes.put('/usuario', validateUserDataFields, userUpdate)
 module.exports = routes;

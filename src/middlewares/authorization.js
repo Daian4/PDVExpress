@@ -5,8 +5,9 @@ const passwordJWT = process.env.passwordJWT
 const checkLogin = async (req, res, next) => {
     const { authorization } = req.headers;
 
+
     if (!authorization) {
-        return res.status(401).json({menagem: "Não autorizado"});
+        return res.status(401).json({ mensagem: "Não autorizado" });
     }
 
     try {
@@ -17,15 +18,18 @@ const checkLogin = async (req, res, next) => {
         const compareId = await knex('usuarios').where("id", id).first()
 
         if (!compareId) {
-            return res.status(404).json({mensagem: "Usuário não encontrado"});
+            return res.status(404).json({ mensagem: "Usuário não encontrado" });
         }
 
         const { senha, ...usuario } = compareId;
 
         req.usuario = usuario;
 
+
+
         next();
     } catch (error) {
+
         return res.status(400).json(error.message);
     }
 }
