@@ -74,8 +74,6 @@ const userUpdate = async (req, res) => {
 
   try {
 
-    //checar se o email ja esta sendo utilizado por outro usuario
-
     const existingUser = await knex('usuarios').where('email', email).whereNot({ id: usuario.id }).first();
 
 
@@ -83,11 +81,10 @@ const userUpdate = async (req, res) => {
       return res.status(400).json({ mensagem: 'O email informado já está sendo utilizado por outro usuário' })
     }
 
-    //criptografar nova senha, caso tenha mudado
 
     const passwordCrypt = await bcrypt.hash(senha, 10);
 
-    //atualizar informações do usuario
+
 
     await knex('usuarios').where('id', usuario.id).update({ nome, email, senha: passwordCrypt })
 
