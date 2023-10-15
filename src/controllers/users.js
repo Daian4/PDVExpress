@@ -1,7 +1,8 @@
 const knex = require("../../database/connection");
 const bcrypt = require("bcrypt");
-const passwordJWT = process.env.passwordJWT;
+const passwordJWT = process.env.passwordJWT
 const jwt = require("jsonwebtoken");
+
 
 const registerUser = async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -66,9 +67,39 @@ const login = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ mensagem: "erro interno do servidor" });
   }
-};
+}
+const userUpdate = async (req, res) => {
+  const { nome, email, senha } = req.body;
+  const { usuario } = req
+
+  try {
+
+    const existingUser = await knex('usuarios').where('email', email).whereNot({ id: usuario.id }).first();
+
+
+    if (existingUser) {
+      return res.status(400).json({ mensagem: 'O email informado já está sendo utilizado por outro usuário' })
+    }
+
+
+    const passwordCrypt = await bcrypt.hash(senha, 10);
+
+
+
+    await knex('usuarios').where('id', usuario.id).update({ nome, email, senha: passwordCrypt })
+
+    return res.status(200).json({ mensagem: 'Usuário atualizado com sucesso' });
+
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ mensagem: "erro interno do servidor" });
+  }
+
+}
 
 module.exports = {
   registerUser,
   login,
+  userUpdate
 };
