@@ -90,7 +90,17 @@ const updateClient = async (req, res) => {
   }
 };
 
+const listCostumers = async(req, res) =>{
+  try {
+    const costumers = await knex("clientes");
+    return res.status(200).json(costumers);
+  } catch (error) {
+    return res.status(500).json({ message: "Erro interno do servidor" });
+  }
+};
+
 module.exports = { 
   registerCustomer,
   updateClient,
+  listCostumers
 }

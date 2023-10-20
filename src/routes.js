@@ -11,8 +11,8 @@ const {
   validateUserDataFields,
   validateEmailAndPasswordFields
 } = require('./middlewares/validateUserData')
-const { registerCustomer, updateClient } = require('./controllers/clients')
-const { registerProduct, deleteProduct } = require('./controllers/products')
+const { registerCustomer, updateClient, listCostumers } = require('./controllers/clients')
+const { registerProduct, deleteProduct, updateproduct } = require('./controllers/products')
 const routes = express()
 
 routes.get('/categoria', listCategories)
@@ -25,7 +25,9 @@ routes.put('/usuario', validateUserDataFields, userUpdate)
 
 routes.post('/cliente', registerCustomer)
 routes.put('/cliente/:id', updateClient)
+routes.get('/cliente', listCostumers)
 
 routes.post('/produto', registerProduct)
+routes.put('/produto/:id', updateproduct)
 routes.delete('/produto/:id', deleteProduct)
 module.exports = routes
