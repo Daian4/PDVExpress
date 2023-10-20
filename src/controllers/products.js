@@ -60,56 +60,74 @@ const updateproduct = async (req, res) => {
     const productId = await knex('produtos').where('id', id).first()
 
     if (!productId) {
-      return res.status(404).json({ mensagem: 'Produto não encontrado' });
+      return res.status(404).json({ mensagem: 'Produto não encontrado' })
     }
 
-    const category = await knex('categorias').where({id: categoria_id}).first()
+    const category = await knex('categorias').where({ id: categoria_id }).first()
 
-    if (!category) {return res.status(400).json({mensagem: 'Categoria não encontrada'})
+    if (!category) {
+      return res.status(400).json({ mensagem: 'Categoria não encontrada' })
     }
     const update = await knex('produtos').where('id', id).update(req.body).returning('*')
 
     if (!update) {
-      return res.status(400).json({ mensagem: 'O produto não foi atualizado' });
+      return res.status(400).json({ mensagem: 'O produto não foi atualizado' })
     }
 
-    return res.status(200).json({ mensagem: 'produto foi atualizado com sucesso.' });
-    
+    return res.status(200).json({ mensagem: 'produto foi atualizado com sucesso.' })
+
   } catch (error) {
     return res.status(400).json(error.message)
   }
 
-};
+}
 
+const getProduct = async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const productId = await knex("produtos")
+      .where("id", id)
+      .first()
+    if (productId) {
+      return res.status(200).json(productId);
+    } else {
+      return res.status(404).json({ message: "Produto não encontrado!" })
+    }
+  } catch (error) {
+    return res.status(500).json({ mensagem: "Erro interno do servidor" })
+  }
+}
 
 const deleteProduct = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params
 
   try {
     const productId = await knex('produtos')
       .where('id', id)
-      .first();
+      .first()
 
     if (!productId) {
-      return res.status(404).json({ mensagem: 'Produto não encontrado' });
+      return res.status(404).json({ mensagem: 'Produto não encontrado' })
     }
 
     const deleteProduct = await knex('produtos')
       .where('id', id)
-      .del();
+      .del()
 
     if (!deleteProduct) {
       return res.status(400).json({ mensagem: 'O Produto não foi deletado' })
     }
 
-    return res.status(200).json({ mensagem: 'Produto excluído com sucesso' });
+    return res.status(200).json({ mensagem: 'Produto excluído com sucesso' })
   } catch (error) {
-    return res.status(500).json({ mensagem: 'Erro interno do servidor' });
+    return res.status(500).json({ mensagem: 'Erro interno do servidor' })
   }
-};
+}
 
 module.exports = {
   registerProduct,
   deleteProduct,
+  getProduct,
   updateproduct
 }
