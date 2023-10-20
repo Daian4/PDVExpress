@@ -29,7 +29,7 @@ create table clientes (
   cep varchar(8),
   rua varchar(150),
   numero integer,
-  bairo varchar(50),
+  bairro varchar(50),
   cidade varchar(50),
   estado varchar(50)
  );
