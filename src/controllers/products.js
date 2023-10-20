@@ -47,4 +47,33 @@ const registerProduct = async (req, res) => {
   }
 }
 
-module.exports = { registerProduct }
+const deleteProduct = async(req, res) => {
+  const { id } = req.params;
+
+  try {
+      const productId = await knex('produtos')
+          .where('id', id)
+          .first();
+
+      if (!productId) {
+          return res.status(404).json({ mensagem: 'Produto não encontrado' });
+      }
+
+      const deleteProduct = await knex('produtos')
+          .where('id', id)
+          .del();
+          
+      if(!deleteProduct){
+          return res.status(400).json({ mensagem: 'O Produto não foi deletado'})
+      }
+
+      return res.status(200).json({ mensagem: 'Produto excluído com sucesso' });
+  } catch (error) {
+      return res.status(500).json({ mensagem: 'Erro interno do servidor'});
+  }
+};
+
+module.exports = { 
+  registerProduct,
+  deleteProduct,
+}
