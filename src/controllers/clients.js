@@ -89,7 +89,22 @@ const updateClient = async (req, res) => {
     return res.status(500).json({ mensagem: "Erro interno do servidor" });
   }
 };
+const getCostumer = async (req, res) =>{
+  const {id} = req.params
 
+  try {
+      const clientDetails = await knex('clientes').where("id", id).first();
+
+      if(!clientDetails){
+          return res.status(404).json({mensagem: 'Não existe cliente para o id informado.'})
+      };
+
+      return res.status(200).json(clientDetails);
+      
+  } catch (error) {
+      return res.status(500).json({ mensagem: "Erro interno do servidor" });
+  }
+}
 const listCostumers = async(req, res) =>{
   try {
     const costumers = await knex("clientes");
@@ -102,5 +117,6 @@ const listCostumers = async(req, res) =>{
 module.exports = { 
   registerCustomer,
   updateClient,
-  listCostumers
+  listCostumers,
+  getCostumer
 }

@@ -46,6 +46,35 @@ const registerProduct = async (req, res) => {
     })
   }
 }
+const listProducts= async (req,res)=>{
+  const {categoria_id} = req.query
+try {
+
+  if(categoria_id){
+    const existingCategories = await knex('categorias').where('id', categoria_id).first();
+    if(existingCategories){
+      const categoriesProducts = await knex('produtos').where('categoria_id', categoria_id);
+      if(categoriesProducts.length===0){
+        return res.status(404).json({mensagem: 'Não existe produto cadastrado para a categoria informada'})
+      } else{
+        return res.status(200).json(categoriesProducts)
+      }
+    }else{
+      return res.status(404).json({mensagem: 'Não existe categoria para o id informado.'})
+    }
+  }
+
+  const products = await knex('produtos');
+  return res.status(200).json(products)
+
+
+  } catch (error) {
+    console.log(error)
+  return res.status(500).json({ mensagem: "Erro interno do servidor" });
+}
+}
+;
+
 
 const updateproduct = async (req, res) => {
   const { id } = req.params
@@ -129,5 +158,6 @@ module.exports = {
   registerProduct,
   deleteProduct,
   getProduct,
-  updateproduct
+  updateproduct,
+  listProducts
 }
