@@ -44,20 +44,20 @@ const registerCustomer = async (req, res) => {
 }
 
 const updateClient = async (req, res) => {
-  const { id } = req.params;
-  const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
+  const { id } = req.params
+  const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body
 
   if (!nome || !email || !cpf) {
     return res
       .status(400)
-      .json({ mensagem: "Todos os campos obrigatórios devem ser informados." });
+      .json({ mensagem: "Todos os campos obrigatórios devem ser informados." })
   }
 
   try {
-    const existingClient = await knex("clientes").where("id", id).first();
+    const existingClient = await knex("clientes").where("id", id).first()
 
     if (!existingClient) {
-      return res.status(404).json({ mensagem: "Cliente não encontrado" });
+      return res.status(404).json({ mensagem: "Cliente não encontrado" })
     }
 
     const clientWithSameEmail = await knex("clientes")
@@ -68,51 +68,53 @@ const updateClient = async (req, res) => {
     if (clientWithSameEmail) {
       return res
         .status(400)
-        .json({ mensagem: "E-mail já está em uso por outro cliente" });
+        .json({ mensagem: "E-mail já está em uso por outro cliente" })
     }
 
     const clientWithSameCpf = await knex("clientes")
       .where("cpf", cpf)
       .whereNot("id", id)
-      .first();
+      .first()
 
     if (clientWithSameCpf) {
       return res
         .status(400)
-        .json({ mensagem: "CPF já está em uso por outro cliente" });
+        .json({ mensagem: "CPF já está em uso por outro cliente" })
     }
 
-    await knex("clientes").where("id", id).update({ nome, email, cpf,  cep, rua, numero, bairro, cidade, estado});
+    await knex("clientes").where("id", id).update({ nome, email, cpf,  cep, rua, numero, bairro, cidade, estado})
 
-    return res.status(200).json({ mensagem: "Cliente atualizado com sucesso" });
+    return res.status(200).json({ mensagem: "Cliente atualizado com sucesso" })
   } catch (error) {
-    return res.status(500).json({ mensagem: "Erro interno do servidor" });
+    return res.status(500).json({ mensagem: "Erro interno do servidor" })
   }
-};
+}
+
 const getCostumer = async (req, res) =>{
   const {id} = req.params
 
   try {
-      const clientDetails = await knex('clientes').where("id", id).first();
+      const clientDetails = await knex('clientes').where("id", id).first()
 
       if(!clientDetails){
           return res.status(404).json({mensagem: 'Não existe cliente para o id informado.'})
-      };
+      }
 
-      return res.status(200).json(clientDetails);
+      return res.status(200).json(clientDetails)
       
   } catch (error) {
-      return res.status(500).json({ mensagem: "Erro interno do servidor" });
+      return res.status(500).json({ mensagem: "Erro interno do servidor" })
   }
 }
+
 const listCostumers = async(req, res) =>{
   try {
-    const costumers = await knex("clientes");
-    return res.status(200).json(costumers);
+    const costumers = await knex("clientes")
+    return res.status(200).json(costumers)
   } catch (error) {
-    return res.status(500).json({ message: "Erro interno do servidor" });
+    return res.status(500).json({ message: "Erro interno do servidor" })
   }
-};
+}
 
 module.exports = { 
   registerCustomer,

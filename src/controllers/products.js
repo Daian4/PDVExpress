@@ -46,14 +46,15 @@ const registerProduct = async (req, res) => {
     })
   }
 }
+
 const listProducts= async (req,res)=>{
   const {categoria_id} = req.query
 try {
 
   if(categoria_id){
-    const existingCategories = await knex('categorias').where('id', categoria_id).first();
+    const existingCategories = await knex('categorias').where('id', categoria_id).first()
     if(existingCategories){
-      const categoriesProducts = await knex('produtos').where('categoria_id', categoria_id);
+      const categoriesProducts = await knex('produtos').where('categoria_id', categoria_id)
       if(categoriesProducts.length===0){
         return res.status(404).json({mensagem: 'Não existe produto cadastrado para a categoria informada'})
       } else{
@@ -64,17 +65,15 @@ try {
     }
   }
 
-  const products = await knex('produtos');
+  const products = await knex('produtos')
   return res.status(200).json(products)
 
 
   } catch (error) {
     console.log(error)
-  return res.status(500).json({ mensagem: "Erro interno do servidor" });
+  return res.status(500).json({ mensagem: "Erro interno do servidor" })
 }
 }
-;
-
 
 const updateproduct = async (req, res) => {
   const { id } = req.params
@@ -119,7 +118,7 @@ const getProduct = async (req, res) => {
       .where("id", id)
       .first()
     if (productId) {
-      return res.status(200).json(productId);
+      return res.status(200).json(productId)
     } else {
       return res.status(404).json({ message: "Produto não encontrado!" })
     }
