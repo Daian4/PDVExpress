@@ -13,6 +13,7 @@ const {
 } = require('./middlewares/validateUserData')
 const { registerCustomer, updateClient, listCostumers, getCostumer } = require('./controllers/clients')
 const { registerProduct, deleteProduct, updateproduct, getProduct, listProducts } = require('./controllers/products')
+const { registerRequest } = require('./controllers/requests')
 const routes = express()
 
 routes.get('/categoria', listCategories)
@@ -34,5 +35,7 @@ routes.get('/produto', listProducts )
 routes.put('/produto/:id', updateproduct)
 routes.get('/produto/:id', getProduct)
 routes.delete('/produto/:id', deleteProduct)
+
+routes.post('/pedido', registerRequest)
 
 module.exports = routes
