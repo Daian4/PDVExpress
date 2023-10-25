@@ -1,4 +1,5 @@
 const knex = require("../../database/connection")
+const transportador = require('../nodemailer')
 
 const registerRequest = async (req, res) => {
   const { cliente_id, pedido_produtos, observacao } = req.body
@@ -47,24 +48,32 @@ const registerRequest = async (req, res) => {
       })
       .returning("id")
 
-    for(const request of pedido_produtos){
-        const {produto_id, quantidade_produto} = request
+    for (const request of pedido_produtos) {
+      const { produto_id, quantidade_produto } = request
 
-        const product = await knex("produtos")
+      const product = await knex("produtos")
         .where("id", produto_id)
         .first()
-        
-        await knex("pedido_produtos").insert({
-            pedido_id: requestClient[0].id,
-            produto_id,
-            quantidade_produto,
-            valor_produto: product.valor
-          })
+
+      await knex("pedido_produtos").insert({
+        pedido_id: requestClient[0].id,
+        produto_id,
+        quantidade_produto,
+        valor_produto: product.valor
+      })
     }
 
-    return res.status(201).json({mensagem: "Pedido efetuado com sucesso, aguarde o email."})
+    transportador.sendMail({
+      from: `${process.env.EMAIL_NAME} <${process.env.EMAIL_FROM}>`,
+      to: `${existingClient.nome} <${existingClient.email}>`,
+      subject: 'PDV express',
+      html: `
+      Olá, ${existingClient.nome} seu pedido foi efetuado com sucesso!
+  `
+    })
+
+    return res.status(201).send({ mensagem: "Pedido efetuado com sucesso, aguarde o email." })
   } catch (error) {
-    console.log(error)
     return res.status(500).json({ mensagem: "Erro interno do servidor" })
   }
 }
