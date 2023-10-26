@@ -78,6 +78,48 @@ const registerRequest = async (req, res) => {
   }
 }
 
+const listRequests = async (req, res) => {
+  const { cliente_id } = req.query;
+
+  try {
+    if (cliente_id) {
+      const getClient = await knex('clientes').where('id', cliente_id).first();
+      if (!getClient) {
+        return res.status(400).json({ error: 'Cliente não encontrado' });
+      }
+    }
+
+    const requestQuery = knex('pedidos').select('*');
+
+    if (cliente_id) {
+      requestQuery.where('cliente_id', cliente_id);
+    }
+
+    const request = await requestQuery;
+
+    const productsQuery = knex('pedido_produtos').join('pedidos', 'pedidos.id', '=', 'pedido_produtos.pedido_id').select('pedido_produtos.*');
+
+    if (cliente_id) {
+      productsQuery.where('pedidos.cliente_id', cliente_id);
+    }
+
+    const products = await productsQuery;
+
+    const requestsFiltered = request.map(pedido => (
+      {
+        pedido,
+        pedido_produtos: products.filter(produto => produto.pedido_id === pedido.id)
+      }
+    ));
+
+    return res.status(200).json(requestsFiltered);
+  } catch (error) {
+    return res.status(500).json({ mensagem: "Erro interno do servidor" })
+  }
+
+}
+
 module.exports = {
   registerRequest,
+  listRequests
 }
