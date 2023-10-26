@@ -1,7 +1,9 @@
 const knex = require('../../database/connection')
+const { uploadImg, deleteImg } = require('../services/upload');
 
 const registerProduct = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body
+  const { originalname, mimetype, buffer } = req.file
 
   if (!descricao || !quantidade_estoque || !valor || !categoria_id) {
     return res.status(400).json({
@@ -30,7 +32,7 @@ const registerProduct = async (req, res) => {
       })
     }
 
-    const product = await knex('produtos')
+    let product = await knex('produtos')
       .insert({
         descricao,
         quantidade_estoque,
@@ -39,7 +41,14 @@ const registerProduct = async (req, res) => {
       })
       .returning('*')
 
-    return res.status(201).json(product)
+
+    const img = await uploadImg(`produtos/${product.id}/${originalname}`, buffer, mimetype)
+
+    product = await knex('produtos').update({ produto_imagem: img.url }).where('id', product[0].id).returning('*')
+
+    product[0].produto_imagem = img.url
+
+    return res.status(201).json(product[0])
   } catch (error) {
     return res.status(500).json({
       mensagem: 'Erro interno no servidor'
@@ -47,32 +56,32 @@ const registerProduct = async (req, res) => {
   }
 }
 
-const listProducts= async (req,res)=>{
-  const {categoria_id} = req.query
-try {
+const listProducts = async (req, res) => {
+  const { categoria_id } = req.query
+  try {
 
-  if(categoria_id){
-    const existingCategories = await knex('categorias').where('id', categoria_id).first()
-    if(existingCategories){
-      const categoriesProducts = await knex('produtos').where('categoria_id', categoria_id)
-      if(categoriesProducts.length===0){
-        return res.status(404).json({mensagem: 'Não existe produto cadastrado para a categoria informada'})
-      } else{
-        return res.status(200).json(categoriesProducts)
+    if (categoria_id) {
+      const existingCategories = await knex('categorias').where('id', categoria_id).first()
+      if (existingCategories) {
+        const categoriesProducts = await knex('produtos').where('categoria_id', categoria_id)
+        if (categoriesProducts.length === 0) {
+          return res.status(404).json({ mensagem: 'Não existe produto cadastrado para a categoria informada' })
+        } else {
+          return res.status(200).json(categoriesProducts)
+        }
+      } else {
+        return res.status(404).json({ mensagem: 'Não existe categoria para o id informado.' })
       }
-    }else{
-      return res.status(404).json({mensagem: 'Não existe categoria para o id informado.'})
     }
-  }
 
-  const products = await knex('produtos')
-  return res.status(200).json(products)
+    const products = await knex('produtos')
+    return res.status(200).json(products)
 
 
   } catch (error) {
     console.log(error)
-  return res.status(500).json({ mensagem: "Erro interno do servidor" })
-}
+    return res.status(500).json({ mensagem: "Erro interno do servidor" })
+  }
 }
 
 const updateproduct = async (req, res) => {
@@ -139,6 +148,13 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ mensagem: 'Produto não encontrado' })
     }
 
+    const productRequest = await knex('pedido_produtos').where('produto_id', id).first()
+    if (productRequest) {
+      return res.status(200).json({ mensagem: 'O produto não pode ser excluído, pois está vinculado a pedidos!' })
+    }
+
+    await deleteImg(productId.produto_imagem)
+
     const deleteProduct = await knex('produtos')
       .where('id', id)
       .del()
@@ -149,6 +165,7 @@ const deleteProduct = async (req, res) => {
 
     return res.status(200).json({ mensagem: 'Produto excluído com sucesso' })
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ mensagem: 'Erro interno do servidor' })
   }
 }
