@@ -14,6 +14,7 @@ const {
 const { registerCustomer, updateClient, listCostumers, getCostumer } = require('./controllers/clients')
 const { registerProduct, deleteProduct, updateproduct, getProduct, listProducts } = require('./controllers/products')
 const { registerRequest, listRequests } = require('./controllers/requests')
+const multer = require('./multer')
 const routes = express()
 
 routes.get('/categoria', listCategories)
@@ -30,7 +31,7 @@ routes.put('/cliente/:id', updateClient)
 routes.get('/cliente/:id', getCostumer)
 routes.get('/cliente', listCostumers)
 
-routes.post('/produto', registerProduct)
+routes.post('/produto', multer.single('produto_imagem'), registerProduct)
 routes.get('/produto', listProducts)
 routes.put('/produto/:id', updateproduct)
 routes.get('/produto/:id', getProduct)
