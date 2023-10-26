@@ -1,7 +1,9 @@
 const knex = require('../../database/connection')
+const { uploadImg, deleteImg } = require('../services/upload');
 
 const registerProduct = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body
+  const { originalname, mimetype, buffer } = req.file
 
   if (!descricao || !quantidade_estoque || !valor || !categoria_id) {
     return res.status(400).json({
@@ -30,7 +32,7 @@ const registerProduct = async (req, res) => {
       })
     }
 
-    const product = await knex('produtos')
+    let product = await knex('produtos')
       .insert({
         descricao,
         quantidade_estoque,
@@ -39,7 +41,14 @@ const registerProduct = async (req, res) => {
       })
       .returning('*')
 
-    return res.status(201).json(product)
+
+    const img = await uploadImg(`produtos/${product.id}/${originalname}`, buffer, mimetype)
+
+    product = await knex('produtos').update({ produto_imagem: img.url }).where('id', product[0].id).returning('*')
+
+    product[0].produto_imagem = img.url
+
+    return res.status(201).json(product[0])
   } catch (error) {
     return res.status(500).json({
       mensagem: 'Erro interno no servidor'
@@ -143,6 +152,8 @@ const deleteProduct = async (req, res) => {
     if (productRequest) {
       return res.status(200).json({ mensagem: 'O produto não pode ser excluído, pois está vinculado a pedidos!' })
     }
+
+    await deleteImg(productId.produto_imagem)
 
     const deleteProduct = await knex('produtos')
       .where('id', id)
