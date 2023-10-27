@@ -208,7 +208,7 @@ Essa é a rota que será utilizada para cadastrar um novo produto no sistema.
 **Atenção:** Certificar-se de que o token de autenticação está sendo enviado.
 
 - **Requisição**  
- O corpo (body) deverá possuir um objeto com as propriedades mostradas na imagem. O retorno desta requisição, em caso de sucesso, exibirá os dados de entrada junto ao ID do produto.  
+ O corpo (body) deverá possuir um objeto com as propriedades mostradas na imagem. No body, é selecionado a estrutura de Multipart Form, permitindo que, caso queira, o usuário cadastre junto ao produto, uma imagem do mesmo. O retorno desta requisição, em caso de sucesso, exibirá os dados de entrada junto ao ID do produto.  
 <img src='./img/cadastrarProduto.png'>
 </details>  
 <details><summary>
@@ -264,7 +264,7 @@ Deverá ser enviado o ID do produto a ser editado como parâmetro de rota do end
 
 #### `DELETE` `/produto/:id`
 
-Essa é a rota que deverá ser utilizada para quando o usuário logado quiser excluir um de seus produtos cadastrados. Deverá ser aplicada uma regra de negócio que não permitirá exclusão de produto que tenha sido registrado em algum pedido.
+Essa é a rota que deverá ser utilizada para quando o usuário logado quiser excluir um de seus produtos cadastrados. Não será permitida a exclusão de produto que tenha sido registrado em algum pedido.
 **Atenção:** Certificar-se de que o token de autenticação está sendo enviado.
 
 - **Requisição**  
@@ -333,7 +333,8 @@ Deverá ser enviado o ID do cliente procurado como parâmetro de rota do endpoin
  Como resposta, em caso da existência do cliente buscado, serão exibidos os dados do cliente.
 <img src='./img/detalharCliente.png'>
 </details> 
-</details>
+
+<details><summary>
 
 ### Cadastrar Pedido
 
@@ -341,15 +342,16 @@ Deverá ser enviado o ID do cliente procurado como parâmetro de rota do endpoin
 
 #### `POST` `/pedido`
 
-Essa é a rota que será utilizada para cadastrar um novo pedido no sistema.**Atenção:** Certificar-se de que o token de autenticação está sendo enviado.
+Essa é a rota que será utilizada para cadastrar um novo pedido no sistema.  
+**Atenção:** Certificar-se de que o token de autenticação está sendo enviado.
 
-- **Requisição**
-  É necessário que o pedido contenha, pelo menos, um produto vinculado. O corpo (body) deverá conter um objeto com as propriedades: cliente_id, observação (opcional) e pedido_produtos, que será um array de objetos com as propriedades: produto_id e quantidade_produto. O retorno desta requisição, em caso de sucesso, exibirá uma mensagem informando que o pedido foi cadastrado com sucesso. **Atenção:** o pedido somente será cadastrado se todos os produtos estiverem validados.
-
-<img src=''>
-
+- **Requisição**  
+  É necessário que o pedido contenha, pelo menos, um produto vinculado. O corpo (body) deverá conter um objeto com as propriedades: cliente_id, observação (opcional) e pedido_produtos, que será um array de objetos com as propriedades: produto_id e quantidade_produto. O retorno desta requisição, em caso de sucesso, exibirá uma mensagem informando que o pedido foi cadastrado com sucesso.  
+  **Atenção:** o pedido somente será cadastrado se todos os produtos estiverem validados.  
+<img src='./img/cadastrarPedido.png'>
 </details> 
-</details>
+
+<details><summary>
 
 ### Listar Pedido
 
@@ -357,17 +359,17 @@ Essa é a rota que será utilizada para cadastrar um novo pedido no sistema.**At
 
 #### `GET` `/pedido`
 
-Essa é a rota que será chamada quando o usuário logado quiser listar todos os pedidos cadastrados. **Atenção:** Certificar-se de que o token de autenticação está sendo enviado.
+Essa é a rota que será chamada quando o usuário logado quiser listar todos os pedidos cadastrados.  
+**Atenção:** Certificar-se de que o token de autenticação está sendo enviado.
 
-- **Requisição**
-  Não é necessária nenhuma informação, além do token. Porém, há a inclusão de um parâmetro do tipo query `cliente_id` para que seja possível consultar pedidos por cliente. O retorno desta requisição, em caso de sucesso, exibirá um array com todos os pedidos cadastrados e, caso tenha passado a query, todos os pedidos cadastrados para o cliente específico.
-
-  <img src=''>
-
+- **Requisição**  
+  É necessária a inclusão de um parâmetro do tipo query `cliente_id` para que seja possível consultar pedidos por cliente. O retorno desta requisição, em caso de sucesso, exibirá um array com todos os pedidos cadastrados e, caso tenha passado a query, todos os pedidos cadastrados para o cliente específico.
+<img src='./img/listarPedido.png'>
 </details> 
+
 </details>
 
----
+---  
 
 ## ✒️ Autoras
 
